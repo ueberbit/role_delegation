@@ -1,0 +1,74 @@
+<?php
+
+/**
+ * @file
+ *
+ * This module allows site administrators to grant some roles the authority to
+ * change roles assigned to users, without them needing the 'administer access
+ * control' permission.
+ *
+ * It provides its own tab in the user profile so that roles can be changed
+ * without needing access to the user edit form.
+ */
+
+use Drupal\Component\Utility\String;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Url;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\role_delegation\RoleDelegationHelper;
+use \Drupal\user\Entity;
+
+/**
+ * Implements hook_help().
+ */
+function role_delegation_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page':
+      $output = '';
+      $output = '<p>' . t('This module allows site administrators to grant some roles the authority to assign selected roles to users, without them needing the <em>administer permissions</em> permission.') . '</p>';
+      $output .= '<p>' . t('It provides its own tab in the user profile so that roles can be assigned without needing access to the user edit form.') . '</p>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function role_delegation_theme() {
+  return array(
+    'role_delegation_delegate_roles_action_form' => array(
+      'render element' => 'form',
+    ),
+  );
+};
+
+/**
+ * Implements hook_form_alter().
+ */
+function role_delegation_form_alter(&$form, \Drupal\Core\Form\FormStateInterface &$form_state, $form_id) {
+  if ($form_id == 'user_register_form' || $form_id == 'user_form') {
+    if (\Drupal::currentUser()->hasPermission('administer permissions')) {
+      return;
+    }
+    $form = RoleDelegationHelper::addRoleDelegationElement($form, $form_state->getFormObject()->getEntity());
+    $form['#entity_builders'][] = 'role_delegation_update';
+  }
+}
+
+/**
+ * Entity form builder to update roles to the user.
+ */
+function role_delegation_update($entity_type, $entity, &$form, FormStateInterface $form_state) {
+  if($entity) {
+    foreach($form_state->getValue('roles_change') as $rid => $value) {
+      if($rid === $value) {
+        $entity->addRole($rid);
+      }
+      if($value === 0) {
+        $entity->removeRole($rid);
+      }
+    }
+  }
+}

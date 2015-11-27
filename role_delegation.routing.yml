@@ -1,0 +1,9 @@
+role_delegation.edit_form:
+  path: '/user/{user}/roles'
+  defaults:
+    _controller: '\Drupal\role_delegation\Controller\RoleDelegationController::editForm'
+    _title: 'Roles'
+  requirements:
+    _permission: 'access content'
+  options:
+    _admin_route: TRUE
