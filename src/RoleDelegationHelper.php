@@ -60,7 +60,8 @@ class RoleDelegationHelper {
       '#type' => 'checkboxes',
       '#title' => isset($form['account']['roles']['#title']) ? $form['account']['roles']['#title'] : t('Roles'),
       '#options' => $roles_delegate,
-      '#default_value' => array_keys($default_options),
+//      '#default_value' => array_keys($default_options),
+      '#default_value' => array_keys(array_intersect_key(array_flip($roles_current), $roles_delegate)),
       '#description' => isset($form['account']['roles']['#description']) ? $form['account']['roles']['#description'] : t('Change roles assigned to user.'),
     );
 

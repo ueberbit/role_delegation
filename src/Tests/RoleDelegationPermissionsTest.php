@@ -49,7 +49,7 @@ class RoleDelegationPermissionsTest extends RoleDelegationTest {
   /**
    * Check that high role can't assign high role.
    */
-/*  public function testHighHigh() {
+  public function testHighHigh() {
     $this->drupalLogin($this->user_high);
 // Just check that no option is presented to the user.
     $this->assertFalse(
@@ -60,23 +60,23 @@ class RoleDelegationPermissionsTest extends RoleDelegationTest {
       )),
       t('Role Delegation')
     );
-  }*/
+  }
 
   /**
    * Check that roles can't be assigned by forgery.
    */
-/*  public function testRoleForgery() {
+  public function testRoleForgery() {
     $this->drupalLogin($this->user_high);
 
 // Have the nefarious high user forge an option to assign the high role...
-    $this->drupalGet("user/{$this->user_low->uid}/edit");
+    $this->drupalGet("user/{$this->user_low->id()}/edit");
     $name = "roles_change[{$this->rid_low}]";
     $input = $this->xpath("//input[@name='$name']");
     $dome = dom_import_simplexml($input[0]);
     $dome->setAttribute('value', $this->rid_high);
 
 // ... then submit the form, and check that he didn't get the role.
-    $this->drupalPost(NULL, array($name => TRUE), t('Save'));
+    $this->drupalPostForm(NULL, array($name => TRUE), t('Save'));
     $this->assertRaw(
       t('An illegal choice has been detected. Please contact the site administrator.'),
       t('Role assignment forgery is blocked.') . ' (#1)',
@@ -88,5 +88,5 @@ class RoleDelegationPermissionsTest extends RoleDelegationTest {
       t('Role assignment forgery is blocked.') . ' (#2)',
       t('Role Delegation')
     );
-  }*/
+  }
 }

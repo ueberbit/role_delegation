@@ -15,6 +15,7 @@ use Drupal\Component\Utility\String;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\role_delegation\RoleDelegationHelper;
@@ -55,6 +56,34 @@ function role_delegation_form_alter(&$form, \Drupal\Core\Form\FormStateInterface
     $form = RoleDelegationHelper::addRoleDelegationElement($form, $form_state->getFormObject()->getEntity());
     $form['#entity_builders'][] = 'role_delegation_update';
   }
+  if ($form_id == 'views_form_user_admin_people_page_1') {
+    $options = $form['header']['user_bulk_form']['action']['#options'];
+    $roles = user_roles(TRUE);
+    unset($roles[AccountInterface::AUTHENTICATED_ROLE]);
+    unset($roles['administrator']);
+    $add_roles = array();
+    $remove_roles = array();
+    foreach ($options as $option => $label) {
+      $operation_rid = explode('-', $option);
+      $operation = $operation_rid[0];
+      if ($operation == 'role_delegation_add_role') {
+        $rid = $operation_rid[1];
+        $add_roles[$option] = $roles[$rid];
+        unset($option[$option]);
+      }
+      elseif ($operation == 'role_delegation_remove_role') {
+        $rid = $operation_rid[1];
+        $remove_roles[$option] = $roles[$rid];
+        unset($options[$option]);
+      }
+    }
+    if (count($add_roles)) {
+      $form['options']['operation']['#options'] = $options + array(
+          t('Add a role to the selected users') => $add_roles,
+          t('Remove a role from the selected users') => $remove_roles,
+        );
+    }
+  }
 }
 
 /**
@@ -71,4 +100,10 @@ function role_delegation_update($entity_type, $entity, &$form, FormStateInterfac
       }
     }
   }
+}
+
+
+function role_delegation_entity_operation_alter(array &$operations, \Drupal\Core\Entity\EntityInterface $entity) {
+
+  dpm($operations, 'operations');
 }

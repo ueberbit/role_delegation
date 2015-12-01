@@ -115,6 +115,7 @@ class RoleDelegationTest extends WebTestBase {
     $this->drupalPostForm(NULL, array($name => $assign), t('Save'));
 
     $elements = $this->xpath("//input[@name='$name']");
+    $debug = empty($elements[0]['checked']);
     return isset($elements[0]) && ($assign XOR empty($elements[0]['checked']));
   }
 
@@ -143,17 +144,5 @@ class RoleDelegationTest extends WebTestBase {
       ($assign ? 'Assign' : 'Remove') . ' permission "' . $permission . '" ' . ($assign ? 'to' : 'from') . " role $rid."
     );
   }
-
-
-
-/*  protected function testAssignPermissionToRole() {
-    $rid = $this->rid_high;
-    $edit = array();
-    $edit[$rid . '[assign low role]'] = TRUE;
-    $this->drupalPostForm('admin/people/permissions/', $edit, t('Save permissions'));
-    $elements = $this->xpath("//input[@name={$rid} . '[assign low role]']");
-    $this->assertTrue(
-      isset($elements[0]) && (TRUE XOR empty($elements[0]['checked'])), 'Assign permission "assign low role" to role high');
-  }*/
 
 }
