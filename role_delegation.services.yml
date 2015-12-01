@@ -1,0 +1,6 @@
+services:
+  role_delegation.access_checker:
+    class: Drupal\role_delegation\Access\RoleDelegationAccessCheck
+    arguments: ['@current_user']
+    tags:
+      - { name: access_check, applies_to: _role_delegation_access_check }

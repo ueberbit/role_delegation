@@ -4,6 +4,6 @@ role_delegation.edit_form:
     _controller: '\Drupal\role_delegation\Controller\RoleDelegationController::editForm'
     _title: 'Roles'
   requirements:
-    _permission: 'access content'
+    _custom_access: '\Drupal\role_delagation\Controller\RoleDelegationAccessCheck::access'
   options:
     _admin_route: TRUE
