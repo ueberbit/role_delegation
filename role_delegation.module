@@ -20,6 +20,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\role_delegation\RoleDelegationHelper;
 use \Drupal\user\Entity;
+use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_help().
@@ -102,8 +103,24 @@ function role_delegation_update($entity_type, $entity, &$form, FormStateInterfac
   }
 }
 
+/**
+ * Implements hook_e
+ */
+/**
+ * Implements hook_entity_delete().
+ */
+function role_delegation_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
+  if ($entity->getEntityTypeId() == 'user_role') {
+    $permission = "assign {$entity->id()} role";
 
-function role_delegation_entity_operation_alter(array &$operations, \Drupal\Core\Entity\EntityInterface $entity) {
+    $roles = \Drupal::entityQuery('user_role')
+      ->condition('permissions.*', $permission)
+      ->condition('id', $entity->id(), '<>')
+      ->execute();
 
-  dpm($operations, 'operations');
+    foreach (Role::loadMultiple($roles) as $role) {
+      $role->revokePermission($permission);
+      $role->save();
+    }
+  }
 }
