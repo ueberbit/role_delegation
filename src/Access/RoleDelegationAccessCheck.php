@@ -45,8 +45,6 @@ class RoleDelegationAccessCheck implements AccessInterface {
     }
 
     return FALSE;
-    // Check permissions and combine that with any custom access checking needed. Pass forward
-    // parameters from the route and/or request as needed.
-    //return $account->hasPermission('do example things') && $this->someOtherCustomCondition();
+
   }
 }

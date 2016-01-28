@@ -101,9 +101,3 @@ function role_delegation_update($entity_type, $entity, &$form, FormStateInterfac
     }
   }
 }
-
-
-function role_delegation_entity_operation_alter(array &$operations, \Drupal\Core\Entity\EntityInterface $entity) {
-
-  dpm($operations, 'operations');
-}
