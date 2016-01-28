@@ -6,6 +6,8 @@
 
 namespace Drupal\role_delegation\Access;
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\role_delegation\RoleDelegationPermissions;
@@ -24,27 +26,24 @@ class RoleDelegationAccessCheck implements AccessInterface {
    *   Run access checks for this account.
    */
   public function access(AccountInterface $account) {
-
     // Check access to user profile page.
     if($account->hasPermission('access user profiles')) {
-      return FALSE;
+      return AccessResult::forbidden()->cachePerPermissions();
     }
     // Check if they can edit users. In that case, the Roles tab is not needed.
     if ($account->hasPermission('administer users')) {
-      return FALSE;
+      return AccessResult::forbidden()->cachePerPermissions();
     }
     // Check access to role assignment page.
     if ($account->hasPermission('administer permissions')) {
-      return TRUE;
+      return AccessResult::allowed()->cachePerPermissions();
     }
-    $perms = (new RoleDelegationPermissions)->rolePermissions();
-    foreach ($perms as $perm) {
+    $perms = new RoleDelegationPermissions();
+    foreach ($perms->rolePermissions() as $perm) {
       if ($account->hasPermission($perm)) {
-        return TRUE;
+        return AccessResult::allowed()->cachePerPermissions();
       }
     }
-
-    return FALSE;
-
+    return AccessResult::forbidden();
   }
 }

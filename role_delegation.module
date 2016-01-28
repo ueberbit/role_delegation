@@ -11,15 +11,13 @@
  * without needing access to the user edit form.
  */
 
-use Drupal\Component\Utility\String;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Url;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\role_delegation\RoleDelegationHelper;
-use \Drupal\user\Entity;
+use Drupal\user\Entity;
+use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_help().
@@ -98,6 +96,28 @@ function role_delegation_update($entity_type, $entity, &$form, FormStateInterfac
       if($value === 0) {
         $entity->removeRole($rid);
       }
+    }
+  }
+}
+
+/**
+ * Implements hook_e
+ */
+/**
+ * Implements hook_entity_delete().
+ */
+function role_delegation_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
+  if ($entity->getEntityTypeId() == 'user_role') {
+    $permission = "assign {$entity->id()} role";
+
+    $roles = \Drupal::entityQuery('user_role')
+      ->condition('permissions.*', $permission)
+      ->condition('id', $entity->id(), '<>')
+      ->execute();
+
+    foreach (Role::loadMultiple($roles) as $role) {
+      $role->revokePermission($permission);
+      $role->save();
     }
   }
 }
