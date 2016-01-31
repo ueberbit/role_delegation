@@ -38,9 +38,9 @@ class RoleDelegationPermissionsTest extends RoleDelegationTest {
     $this->drupalLogin($this->user_high);
     $this->assertTrue(
       $this->assignRoleToUser($this->rid_low, $this->user_low),  // could be any user
-      t('!role1 role can assign !role2 role.', array(
-        '!role1' => 'High',
-        '!role2' => 'low'
+      t('%role1 role can assign %role2 role.', array(
+        '%role1' => 'High',
+        '%role2' => 'low'
       )),
       t('Role Delegation')
     );
@@ -54,9 +54,9 @@ class RoleDelegationPermissionsTest extends RoleDelegationTest {
 // Just check that no option is presented to the user.
     $this->assertFalse(
       $this->assignRoleToUser($this->rid_high, $this->user_high),  // could be any user
-      t("!role1 role can't assign !role2 role.", array(
-        '!role1' => 'High',
-        '!role2' => 'high'
+      t("%role1 role can't assign %role2 role.", array(
+        '%role1' => 'High',
+        '%role2' => 'high'
       )),
       t('Role Delegation')
     );

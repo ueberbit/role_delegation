@@ -25,6 +25,13 @@ class RoleDelegationTest extends WebTestBase {
   public static $modules = array('user', 'role_delegation');
 
   /**
+   * Use the standard profile.
+   *
+   * @var
+   */
+  protected $profile = 'standard';
+
+  /**
    * A field storage to use in this test class.
    *
    * @var \Drupal\field\Entity\FieldStorageConfig
@@ -59,8 +66,8 @@ class RoleDelegationTest extends WebTestBase {
     parent::setUp();
 
     // Create roles
-    $this->rid_high = $this->drupalCreateRole(array(), 'high');
-    $this->rid_low  = $this->drupalCreateRole(array(), 'low' );
+    $this->rid_high = $this->drupalCreateRole(array(), 'high', 'high');
+    $this->rid_low  = $this->drupalCreateRole(array(), 'low', 'low');
 
     // Create users
     $this->user_high = $this->drupalCreateUser(array('administer users'));
