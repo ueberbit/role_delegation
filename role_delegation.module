@@ -47,8 +47,9 @@ function role_delegation_theme() {
  * Implements hook_form_alter().
  */
 function role_delegation_form_alter(&$form, \Drupal\Core\Form\FormStateInterface &$form_state, $form_id) {
+  $current_user = \Drupal::currentUser();
   if ($form_id == 'user_register_form' || $form_id == 'user_form') {
-    if (\Drupal::currentUser()->hasPermission('administer permissions')) {
+    if ($current_user->hasPermission('administer permissions')) {
       return;
     }
     $form = RoleDelegationHelper::addRoleDelegationElement($form, $form_state->getFormObject()->getEntity());
@@ -59,28 +60,23 @@ function role_delegation_form_alter(&$form, \Drupal\Core\Form\FormStateInterface
     $roles = user_roles(TRUE);
     unset($roles[AccountInterface::AUTHENTICATED_ROLE]);
     unset($roles['administrator']);
-    $add_roles = array();
-    $remove_roles = array();
     foreach ($options as $option => $label) {
-      $operation_rid = explode('-', $option);
+      $operation_rid = explode('.', $option);
       $operation = $operation_rid[0];
-      if ($operation == 'role_delegation_add_role') {
+      if ($operation == 'user_add_role_action') {
         $rid = $operation_rid[1];
-        $add_roles[$option] = $roles[$rid];
-        unset($option[$option]);
+        if (empty($roles[$rid]) || !$current_user->hasPermission("assign {$rid} role")){
+          unset($options[$option]);
+        }
       }
-      elseif ($operation == 'role_delegation_remove_role') {
+      elseif ($operation == 'user_remove_role_action') {
         $rid = $operation_rid[1];
-        $remove_roles[$option] = $roles[$rid];
-        unset($options[$option]);
+        if (empty($roles[$rid]) || !$current_user->hasPermission("assign {$rid} role")){
+          unset($options[$option]);
+        }
       }
     }
-    if (count($add_roles)) {
-      $form['options']['operation']['#options'] = $options + array(
-          t('Add a role to the selected users') => $add_roles,
-          t('Remove a role from the selected users') => $remove_roles,
-        );
-    }
+    $form['header']['user_bulk_form']['action']['#options'] = $options;
   }
 }
 
