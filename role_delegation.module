@@ -97,9 +97,6 @@ function role_delegation_update($entity_type, $entity, &$form, FormStateInterfac
 }
 
 /**
- * Implements hook_e
- */
-/**
  * Implements hook_entity_delete().
  */
 function role_delegation_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
