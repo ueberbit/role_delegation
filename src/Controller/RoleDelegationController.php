@@ -8,9 +8,7 @@
 namespace Drupal\role_delegation\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Render\RendererInterface;
 use Drupal\user\UserInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Controller routines for contact routes.

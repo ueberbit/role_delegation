@@ -8,7 +8,6 @@
 namespace Drupal\role_delegation\Tests;
 
 use Drupal\simpletest\WebTestBase;
-use Drupal\user\Entity\Role;
 
 /**
  * Base class for Role Delegation tests.
